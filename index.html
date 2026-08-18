@@ -3,26 +3,81 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Casino Cartas</title>
+  <title>Casino Royale</title>
   <style>
-    body { text-align: center; font-family: sans-serif; padding-top: 50px; background-color: #121212; color: white; }
-    button { padding: 20px 40px; font-size: 22px; background: #28a745; color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
-    #resultado { margin-top: 30px; font-size: 36px; font-weight: bold; color: #ffc107; }
+    body { text-align: center; font-family: sans-serif; padding: 20px; background-color: #121212; color: white; }
+    .menu { margin-bottom: 25px; }
+    .tab-btn { padding: 10px 20px; font-size: 16px; margin: 5px; background: #333; color: white; border: 1px solid #555; border-radius: 8px; cursor: pointer; }
+    .tab-btn.activo { background: #007bff; border-color: #007bff; font-weight: bold; }
+    .juego { display: none; background: #1e1e1e; padding: 25px; border-radius: 15px; margin: 0 auto; max-width: 400px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+    .juego.activo { display: block; }
+    button.action-btn { padding: 15px 30px; font-size: 20px; background: #28a745; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+    #res-cartas { font-size: 32px; font-weight: bold; color: #ffc107; margin-top: 20px; }
+    #pantalla-slots { font-size: 45px; margin: 15px 0; background: #2a2a2a; padding: 15px; border-radius: 10px; }
+    #res-slots { font-size: 20px; font-weight: bold; color: #00ffcc; margin-top: 15px; }
   </style>
 </head>
 <body>
-  <h1>🎰 Generador de Poker</h1>
-  <button onclick="sacarYMostrarCarta()">SACAR CARTA</button>
-  <p id="resultado">---</p>
+
+  <h1>🎰 Casino Virtual</h1>
+
+  <!-- Menú para cambiar de juego -->
+  <div class="menu">
+    <button class="tab-btn activo" onclick="cambiarJuego('cartas', this)">🎴 Cartas Poker</button>
+    <button class="tab-btn" onclick="cambiarJuego('slots', this)">🎰 Tragaperras</button>
+  </div>
+
+  <!-- JUEGO 1: CARTAS DE POKER -->
+  <div id="juego-cartas" class="juego activo">
+    <h2>Duelo de Cartas</h2>
+    <button class="action-btn" onclick="sacarCarta()">SACAR CARTA</button>
+    <p id="res-cartas">---</p>
+  </div>
+
+  <!-- JUEGO 2: TRAGAPERRAS -->
+  <div id="juego-slots" class="juego">
+    <h2>Tragaperras Exprés</h2>
+    <div id="pantalla-slots">❓ | ❓ | ❓</div>
+    <button class="action-btn" style="background:#ffc107; color:black;" onclick="girarSlots()">GIRAR</button>
+    <p id="res-slots">Presiona para tirar</p>
+  </div>
 
   <script>
-    function sacarYMostrarCarta() {
+    // Cambiar entre pestañas de juegos
+    function cambiarJuego(idJuego, boton) {
+      document.querySelectorAll('.juego').forEach(div => div.classList.remove('activo'));
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('activo'));
+      document.getElementById('juego-' + idJuego).classList.add('activo');
+      boton.classList.add('activo');
+    }
+
+    // Lógica del juego de cartas
+    function sacarCarta() {
       const palos = ['♥️', '♦️', '♣️', '♠️'];
       const valores = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
       const palo = palos[Math.floor(Math.random() * palos.length)];
       const valor = valores[Math.floor(Math.random() * valores.length)];
-      document.getElementById('resultado').innerText = `${valor} de ${palo}`;
+      document.getElementById('res-cartas').innerText = `${valor} de ${palo}`;
+    }
+
+    // Lógica del juego de tragaperras
+    function girarSlots() {
+      const figuras = ['🍋', '🔔', '7️⃣', '💎', '🍒', '⭐'];
+      const f1 = figuras[Math.floor(Math.random() * figuras.length)];
+      const f2 = figuras[Math.floor(Math.random() * figuras.length)];
+      const f3 = figuras[Math.floor(Math.random() * figuras.length)];
+
+      document.getElementById('pantalla-slots').innerText = `${f1} | ${f2} | ${f3}`;
+
+      if (f1 === f2 && f2 === f3) {
+        document.getElementById('res-slots').innerText = '🔥 ¡JACKPOT! (3 iguales - Paga x5)';
+      } else if (f1 === f2 || f1 === f3 || f2 === f3) {
+        document.getElementById('res-slots').innerText = '✨ ¡PAR! (2 iguales - Paga x2)';
+      } else {
+        document.getElementById('res-slots').innerText = '❌ Sin premio (Gana la Casa)';
+      }
     }
   </script>
+
 </body>
 </html>
