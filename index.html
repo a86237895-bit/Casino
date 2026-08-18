@@ -5,45 +5,80 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Casino Royale</title>
   <style>
-    body { text-align: center; font-family: sans-serif; padding: 20px; background-color: #121212; color: white; }
+    body { text-align: center; font-family: sans-serif; padding: 20px; background-color: #0d0d0d; color: white; }
     .menu { margin-bottom: 25px; }
-    .tab-btn { padding: 10px 20px; font-size: 16px; margin: 5px; background: #333; color: white; border: 1px solid #555; border-radius: 8px; cursor: pointer; }
-    .tab-btn.activo { background: #007bff; border-color: #007bff; font-weight: bold; }
-    .juego { display: none; background: #1e1e1e; padding: 25px; border-radius: 15px; margin: 0 auto; max-width: 400px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+    .tab-btn { padding: 10px 20px; font-size: 16px; margin: 5px; background: #222; color: #fff; border: 1px solid #444; border-radius: 8px; cursor: pointer; }
+    .tab-btn.activo { background: #d4af37; color: #000; border-color: #d4af37; font-weight: bold; }
+    
+    .juego { display: none; background: #181818; padding: 25px; border-radius: 20px; margin: 0 auto; max-width: 380px; box-shadow: 0 8px 20px rgba(0,0,0,0.8); border: 1px solid #333; }
     .juego.activo { display: block; }
-    button.action-btn { padding: 15px 30px; font-size: 20px; background: #28a745; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 15px; }
-    #res-cartas { font-size: 32px; font-weight: bold; color: #ffc107; margin-top: 20px; }
-    #pantalla-slots { font-size: 45px; margin: 15px 0; background: #2a2a2a; padding: 15px; border-radius: 10px; }
-    #res-slots { font-size: 20px; font-weight: bold; color: #00ffcc; margin-top: 15px; }
+    
+    button.action-btn { padding: 15px 30px; font-size: 18px; background: #28a745; color: white; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 20px; width: 80%; }
+    
+    /* DISEÑO CARTA DE POKER */
+    .carta-container { display: flex; justify-content: center; margin-top: 20px; }
+    .carta { width: 120px; height: 170px; background: white; border-radius: 12px; color: black; display: flex; flex-direction: column; justify-content: space-between; padding: 10px; box-shadow: 0 6px 15px rgba(255,255,255,0.2); font-weight: bold; border: 2px solid #ccc; position: relative; }
+    .carta.rojo { color: #e53935; }
+    .carta.negro { color: #111; }
+    .carta .esquina { font-size: 20px; text-align: left; line-height: 1; }
+    .carta .centro { font-size: 50px; text-align: center; margin: auto; }
+    .carta .esquina-inversa { font-size: 20px; text-align: right; transform: rotate(180deg); line-height: 1; }
+
+    /* DISEÑO MÁQUINA TRAGAMONEDAS */
+    .maquina { background: linear-gradient(180deg, #c0392b, #8e44ad); padding: 20px; border-radius: 25px; border: 4px solid #f1c40f; box-shadow: 0 0 15px #f1c40f; }
+    .pantalla-slots { display: flex; justify-content: center; gap: 10px; background: #000; padding: 15px; border-radius: 15px; border: 3px solid #d4af37; }
+    .slot { width: 70px; height: 80px; background: #222; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 40px; border: 2px solid #555; overflow: hidden; }
+    
+    /* Animación de giro */
+    .girando { animation: girar 0.1s infinite linear; }
+    @keyframes girar {
+      0% { transform: translateY(-10px); filter: blur(2px); }
+      50% { transform: translateY(10px); filter: blur(4px); }
+      100% { transform: translateY(-10px); filter: blur(2px); }
+    }
+
+    #res-cartas, #res-slots { font-size: 18px; font-weight: bold; color: #ffc107; margin-top: 20px; min-height: 25px; }
   </style>
 </head>
 <body>
 
   <h1>🎰 Casino Virtual</h1>
 
-  <!-- Menú para cambiar de juego -->
+  <!-- Menú -->
   <div class="menu">
     <button class="tab-btn activo" onclick="cambiarJuego('cartas', this)">🎴 Cartas Poker</button>
-    <button class="tab-btn" onclick="cambiarJuego('slots', this)">🎰 Tragaperras</button>
+    <button class="tab-btn" onclick="cambiarJuego('slots', this)">🎰 Tragamonedas</button>
   </div>
 
   <!-- JUEGO 1: CARTAS DE POKER -->
   <div id="juego-cartas" class="juego activo">
     <h2>Duelo de Cartas</h2>
+    <div class="carta-container">
+      <div id="carta-fisica" class="carta negro">
+        <div class="esquina" id="c-top">?</div>
+        <div class="centro" id="c-center">🃏</div>
+        <div class="esquina-inversa" id="c-bottom">?</div>
+      </div>
+    </div>
     <button class="action-btn" onclick="sacarCarta()">SACAR CARTA</button>
-    <p id="res-cartas">---</p>
+    <p id="res-cartas">Presiona para tirar</p>
   </div>
 
-  <!-- JUEGO 2: TRAGAPERRAS -->
+  <!-- JUEGO 2: TRAGAMONEDAS -->
   <div id="juego-slots" class="juego">
-    <h2>Tragaperras Exprés</h2>
-    <div id="pantalla-slots">❓ | ❓ | ❓</div>
-    <button class="action-btn" style="background:#ffc107; color:black;" onclick="girarSlots()">GIRAR</button>
+    <h2>Tragamonedas</h2>
+    <div class="maquina">
+      <div class="pantalla-slots">
+        <div class="slot" id="s1">❓</div>
+        <div class="slot" id="s2">❓</div>
+        <div class="slot" id="s3">❓</div>
+      </div>
+    </div>
+    <button class="action-btn" style="background:#f1c40f; color:black;" onclick="girarTragamonedas()">GIRAR</button>
     <p id="res-slots">Presiona para tirar</p>
   </div>
 
   <script>
-    // Cambiar entre pestañas de juegos
     function cambiarJuego(idJuego, boton) {
       document.querySelectorAll('.juego').forEach(div => div.classList.remove('activo'));
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('activo'));
@@ -51,31 +86,58 @@
       boton.classList.add('activo');
     }
 
-    // Lógica del juego de cartas
+    // LÓGICA CARTA
     function sacarCarta() {
       const palos = ['♥️', '♦️', '♣️', '♠️'];
       const valores = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
       const palo = palos[Math.floor(Math.random() * palos.length)];
       const valor = valores[Math.floor(Math.random() * valores.length)];
-      document.getElementById('res-cartas').innerText = `${valor} de ${palo}`;
+      
+      const esRojo = (palo === '♥️' || palo === '♦️');
+      const cartaElement = document.getElementById('carta-fisica');
+      
+      cartaElement.className = `carta ${esRojo ? 'rojo' : 'negro'}`;
+      document.getElementById('c-top').innerText = `${valor}\n${palo}`;
+      document.getElementById('c-center').innerText = palo;
+      document.getElementById('c-bottom').innerText = `${valor}\n${palo}`;
+      document.getElementById('res-cartas').innerText = `Salió: ${valor} de ${palo}`;
     }
 
-    // Lógica del juego de tragaperras
-    function girarSlots() {
+    // LÓGICA TRAGAMONEDAS CON GIRO
+    function girarTragamonedas() {
       const figuras = ['🍋', '🔔', '7️⃣', '💎', '🍒', '⭐'];
-      const f1 = figuras[Math.floor(Math.random() * figuras.length)];
-      const f2 = figuras[Math.floor(Math.random() * figuras.length)];
-      const f3 = figuras[Math.floor(Math.random() * figuras.length)];
+      const s1 = document.getElementById('s1');
+      const s2 = document.getElementById('s2');
+      const s3 = document.getElementById('s3');
+      const res = document.getElementById('res-slots');
 
-      document.getElementById('pantalla-slots').innerText = `${f1} | ${f2} | ${f3}`;
+      res.innerText = '¡GIRANDO...!';
+      s1.classList.add('girando');
+      s2.classList.add('girando');
+      s3.classList.add('girando');
 
-      if (f1 === f2 && f2 === f3) {
-        document.getElementById('res-slots').innerText = '🔥 ¡JACKPOT! (3 iguales - Paga x5)';
-      } else if (f1 === f2 || f1 === f3 || f2 === f3) {
-        document.getElementById('res-slots').innerText = '✨ ¡PAR! (2 iguales - Paga x2)';
-      } else {
-        document.getElementById('res-slots').innerText = '❌ Sin premio (Gana la Casa)';
-      }
+      // Simular animación de giro por 1.2 segundos
+      setTimeout(() => {
+        const f1 = figuras[Math.floor(Math.random() * figuras.length)];
+        const f2 = figuras[Math.floor(Math.random() * figuras.length)];
+        const f3 = figuras[Math.floor(Math.random() * figuras.length)];
+
+        s1.classList.remove('girando');
+        s2.classList.remove('girando');
+        s3.classList.remove('girando');
+
+        s1.innerText = f1;
+        s2.innerText = f2;
+        s3.innerText = f3;
+
+        if (f1 === f2 && f2 === f3) {
+          res.innerText = '🔥 ¡JACKPOT! (3 iguales - Paga x5)';
+        } else if (f1 === f2 || f1 === f3 || f2 === f3) {
+          res.innerText = '✨ ¡PAR! (2 iguales - Paga x2)';
+        } else {
+          res.innerText = '❌ Sin premio (Gana la Casa)';
+        }
+      }, 1200);
     }
   </script>
 
