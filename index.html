@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Casino Cartas</title>
+  <style>
+    body { text-align: center; font-family: sans-serif; padding-top: 50px; background-color: #121212; color: white; }
+    button { padding: 20px 40px; font-size: 22px; background: #28a745; color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; }
+    #resultado { margin-top: 30px; font-size: 36px; font-weight: bold; color: #ffc107; }
+  </style>
+</head>
+<body>
+  <h1>🎰 Generador de Poker</h1>
+  <button onclick="sacarYMostrarCarta()">SACAR CARTA</button>
+  <p id="resultado">---</p>
+
+  <script>
+    function sacarYMostrarCarta() {
+      const palos = ['♥️', '♦️', '♣️', '♠️'];
+      const valores = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+      const palo = palos[Math.floor(Math.random() * palos.length)];
+      const valor = valores[Math.floor(Math.random() * valores.length)];
+      document.getElementById('resultado').innerText = `${valor} de ${palo}`;
+    }
+  </script>
+</body>
+</html>
